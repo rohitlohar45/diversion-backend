@@ -18,9 +18,8 @@ app.get("/", (req, res) => {
 
 const io = require("socket.io")(server, {
 	cors: {
-		origin: FRONTEND_ORIGIN, // Replace this with your frontend URL
+		origin: FRONTEND_ORIGIN,
 		methods: ["GET", "POST"],
-		allowedHeaders: ["my-custom-header"],
 		credentials: true,
 	},
 });
