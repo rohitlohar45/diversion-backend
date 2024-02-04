@@ -22,6 +22,7 @@ const io = require("socket.io")(server, {
 		origin: FRONTEND_ORIGIN,
 		methods: ["GET", "POST"],
 		credentials: true,
+		allowedHeaders: ["Content-Type", "Authorization"],
 	},
 });
 
