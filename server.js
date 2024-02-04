@@ -25,7 +25,7 @@ const io = require("socket.io")(server, {
 	},
 });
 
-const peerServer = PeerServer({ port: 9002, path: "/" }, (exp) => {
+const peerServer = PeerServer({ port: 443, path: "/peer" }, (exp) => {
 	console.log("Peerjs Server Running: " + exp.address().port);
 });
 
