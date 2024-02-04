@@ -9,12 +9,18 @@ const PORT = process.env.PORT || 3002;
 const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN;
 const MONGOOSE_URL = process.env.MONGOOSE_URL;
 const { PeerServer } = require("peer");
-app.use(cors());
+const corsOptions = {
+	origin: ["https://diversion-frontend.vercel.app", "http://127.0.0.1:3000"],
+	methods: ["GET", "POST"],
+	credentials: true,
+};
+
+app.use(cors(corsOptions));
 app.use(express.urlencoded());
 app.use(express.json());
 
 app.get("/", (req, res) => {
-	res.send("CodeColab Backend!");
+	res.send("Synclink Backend!");
 });
 
 const io = require("socket.io")(server, {
