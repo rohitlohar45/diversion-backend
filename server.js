@@ -3,6 +3,7 @@ const express = require("express");
 const fetch = require("node-fetch");
 const cors = require("cors");
 const app = express();
+const bcrypt = require("bcrypt");
 const server = require("http").Server(app);
 const PORT = process.env.PORT || 3002;
 const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN;
@@ -34,6 +35,7 @@ peerServer.on("connection", (client) => {
 
 const mongoose = require("mongoose");
 const Doc = require("./models/Doc");
+const User = require("./models/User");
 
 mongoose
 	.connect(MONGOOSE_URL, {
@@ -44,6 +46,51 @@ mongoose
 	})
 	.then(() => console.log("connected to mongodb"))
 	.catch((error) => console.error(error));
+
+app.post("/register", async (req, res) => {
+	try {
+		// Hash the password
+		const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+		console.log(req.body);
+
+		// Create a new user
+		const user = new User({
+			email: req.body.email,
+			name: req.body.username,
+			password: hashedPassword,
+			userType: req.body.userType,
+		});
+
+		// Save the user to the database
+		await user.save();
+		res.status(201).send("User created successfully");
+	} catch (error) {
+		console.error(error);
+		res.status(500).send("Error creating user");
+	}
+});
+
+app.post("/login", async (req, res) => {
+	try {
+		// Find the user by username and only take email id from the data
+
+		const user = await User.findOne({ email: req.body.email }).select("email userType");
+
+		// If user not found, return error
+		console.log(user);
+
+		let userFound = { email: user.email, userType: user.userType };
+		if (!user) {
+			return res.status(404).send("User not found");
+		}
+		console.log({ userFound });
+		res.status(200).send(userFound);
+	} catch (error) {
+		console.error(error);
+		res.status(500).send("Error logging in");
+	}
+});
 
 app.get("/runcode", (req, res) => {
 	var url = req.query.url;
